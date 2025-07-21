@@ -1,0 +1,64 @@
+from crewai import Agent, Crew, Process, Task
+from crewai.project import CrewBase, agent, crew, task
+from crewai.agents.agent_builder.base_agent import BaseAgent
+from typing import List
+
+
+@CrewBase
+class Aula12():
+    """Aula12 crew"""
+
+    agents: List[BaseAgent]
+    tasks: List[Task]
+
+
+# agentes //////////////////////
+
+    @agent
+    def researcher(self) -> Agent:
+        return Agent(
+            config=self.agents_config['researcher'], # type: ignore[index]
+            verbose=True
+        )
+
+    @agent
+    def reporting_analyst(self) -> Agent:
+        return Agent(
+            config=self.agents_config['reporting_analyst'], # type: ignore[index]
+            verbose=True
+        )
+
+
+
+
+# tarefas //////////////////////
+
+    @task
+    def research_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['research_task'], # type: ignore[index]
+        )
+
+    @task
+    def reporting_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['reporting_task'], # type: ignore[index]
+            output_file='report.md'
+        )
+
+
+
+
+# executando a crew //////////////////////
+
+    @crew
+    def crew(self) -> Crew:
+        """Creates the Aula12 crew"""
+
+        return Crew(
+            agents=self.agents, # Automatically created by the @agent decorator
+            tasks=self.tasks, # Automatically created by the @task decorator
+            process=Process.sequential,
+            verbose=True,
+            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+        )
